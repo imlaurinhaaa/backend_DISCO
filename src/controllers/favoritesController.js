@@ -87,4 +87,10 @@ const deleteFavorite = async (req, res) => {
     }
 };
 
-module.exports = { getFavorites, getFavoriteById, createFavorite, updateFavorite, deleteFavorite };
+module.exports = { 
+    getFavorites, 
+    getFavoriteById, 
+    createFavorite, 
+    updateFavorite, 
+    deleteFavorite
+};

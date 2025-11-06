@@ -71,7 +71,6 @@ const createFavorite = async (user_id, singer_id, album_id, song_id) => {
     }
 };
 
-
 // Função para atualizar os dados de um favorito
 const updateFavorite = async (id, user_id, singer_id, album_id, song_id) => {
     try {
@@ -112,4 +111,33 @@ const deleteFavorite = async (req, res) => {
     }
 };
 
-module.exports = { getFavorites, getFavoriteById, createFavorite, updateFavorite, deleteFavorite };
+// Função para alternar o estado de um favorito (adicionar/remover)
+const toggleFavorite = async (user_id, singer_id, album_id, song_id) => {
+    try {
+        // Verifica se o favorito já existe
+        const existingFavorite = await pool.query(
+            "SELECT * FROM favorites WHERE user_id = $1 AND singer_id = $2 AND album_id = $3 AND song_id = $4",
+            [user_id, singer_id, album_id, song_id]
+        );
+
+        if (existingFavorite.rows.length > 0) {
+            // Se já existe, desfavorita (remove o registro)
+            await pool.query(
+                "DELETE FROM favorites WHERE user_id = $1 AND singer_id = $2 AND album_id = $3 AND song_id = $4",
+                [user_id, singer_id, album_id, song_id]
+            );
+            return { message: "Favorito removido com sucesso." };
+        } else {
+            // Caso contrário, adiciona como favorito
+            const newFavorite = await pool.query(
+                "INSERT INTO favorites (user_id, singer_id, album_id, song_id) VALUES ($1, $2, $3, $4) RETURNING *",
+                [user_id, singer_id, album_id, song_id]
+            );
+            return { message: "Favorito adicionado com sucesso.", favorite: newFavorite.rows[0] };
+        }
+    } catch (error) {
+        throw new Error(`Erro ao alternar favorito: ${error.message}`);
+    }
+};
+
+module.exports = { getFavorites, getFavoriteById, createFavorite, updateFavorite, deleteFavorite, toggleFavorite };
