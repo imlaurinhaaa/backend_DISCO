@@ -1,5 +1,7 @@
 require("dotenv").config();
 const express = require("express");  
+const cors = require("cors");
+const singerRoutes = require("./src/routes/singerRoutes");
 const cors = require("cors");  
 const favoritesRoutes = require("./src/routes/favoritesRoutes");
 const playlistsRoutes = require("./src/routes/playlistsRoutes");
@@ -8,8 +10,9 @@ const app = express();
 app.use(cors()); 
 app.use(express.json());
 
-app.use("/favorites", favoritesRoutes);
 app.use("/api", playlistsRoutes);
+app.use("/api", singerRoutes);
+app.use("/api", favoritesRoutes);
 
 const PORT = process.env.PORT || 4000;  
 
