@@ -1,7 +1,7 @@
 const pool = require('../config/database');
 
 const getSingers = async (name) => {
-    let query = "SELECT name.* FROM singers";
+    let query = "SELECT singers.* FROM singers";
     let conditions = [];
     let params = [];
 
