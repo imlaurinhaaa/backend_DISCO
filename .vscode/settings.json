@@ -44,8 +44,12 @@
         "fornecido",
         "fornecidos",
         "Função",
+        "houver",
         "ILIKE",
         "mantém",
+        "música",
+        "Música",
+        "músicas",
         "Nenhuma",
         "número",
         "obrigatório",
@@ -55,6 +59,7 @@
         "registro",
         "removido",
         "resposta",
+        "resultados",
         "Retorna",
         "sucesso",
         "título",
@@ -63,6 +68,7 @@
         "Valida",
         "válido",
         "valores",
+        "vazio",
         "Verifica"
     ]
 }

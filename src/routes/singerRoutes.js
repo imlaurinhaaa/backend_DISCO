@@ -1,4 +1,4 @@
-const express = require("xpress");
+const express = require("express");
 const router = express.Router();
 const singerController = require("../controllers/singerController");
 const multer = require("multer");
