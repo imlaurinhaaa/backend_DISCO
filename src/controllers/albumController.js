@@ -14,12 +14,15 @@ const getAlbums = async (req, res) => {
 const getAlbumById = async (req, res) => {
     try {
         const album = await albumModel.getAlbumById(req.params.id);
-        if (!album) {
-            return res.status(404).json({ message: "Álbum não encontrado." });
-        }
+        
         res.status(200).json({ message: "Álbum encontrado com sucesso", album });
     } catch (error) {
         console.error(error);
+
+        if (error.message.includes("Álbum não encontrado")) {
+            return res.status(404).json({ message: error.message });
+        }
+
         res.status(500).json({ message: `Erro ao buscar álbum por ID: ${error.message}` });
     }
 };
@@ -36,6 +39,11 @@ const  createAlbum = async (req, res) => {
         res.status(201).json({ message: "Álbum criado com sucesso", album: newAlbum });
     } catch (error) {
         console.error(error);
+
+        if (error.message.includes("Já existe um álbum com esse título.")) {
+            return res.status(400).json({ message: error.message });
+        }
+
         res.status(500).json({ message: `Erro ao criar álbum: ${error.message}` });
     }
 };
@@ -43,27 +51,31 @@ const  createAlbum = async (req, res) => {
 const updateAlbum = async (req, res) => {
     try {
         const { title, singer_id, release_year, duration, num_of_tracks, photo_cover, photo_disk } = req.body;
-        const updateAlbum = await albumModel.updateAlbum(req.params.id, title, singer_id, release_year, duration, num_of_tracks, photo_cover, photo_disk);
+        const updatedAlbum = await albumModel.updateAlbum(req.params.id, title, singer_id, release_year, duration, num_of_tracks, photo_cover, photo_disk);
 
-        if (!updateAlbum) {
-            return res.status(404).json({ message: "Álbum não encontrado para atualização." });
-        }
-        res.status(200).json({ message: "Álbum atualizado com sucesso", album: updateAlbum });
+        res.status(200).json({ message: "Álbum atualizado com sucesso", album: updatedAlbum });
     } catch (error) {
         console.error(error);
+
+        if (error.message.includes("Álbum não encontrado")) {
+            return res.status(404).json({ message: error.message });
+        }
+
         res.status(500).json({ message: `Erro ao atualizar álbum: ${error.message}` });
     }
 };
 
 const deleteAlbum = async (req, res) => {
     try {
-        const deleteAlbum = await albumModel.deleteAlbum(req.params.id);
-        if (!deleteAlbum) {
-            return res.status(404).json({ message: "Álbum não encontrado para deletar." });
-        }
+        const deletedAlbum = await albumModel.deleteAlbum(req.params.id);
+        
         res.status(200).json({ message: "Álbum deletado com sucesso." });
     } catch (error) {
         console.error(error);
+
+        if (error.message.includes("Álbum não encontrado")) {
+            return res.status(404).json({ message: error.message });
+        }
         res.status(500).json({ message: `Erro ao deletar álbum: ${error.message}` });
     }
 };

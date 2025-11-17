@@ -52,19 +52,20 @@ const createSinger = async (photo, name, musical_genre, about, popular_song) => 
 const updateSinger = async (id, photo, name, musical_genre, about, popular_song) => {
     try {
         const currentSinger = await pool.query("SELECT * FROM singers WHERE id = $1", [id]);
-        if (!currentSinger.rows[0]) {
+        const singer = currentSinger.rows[0];
+        
+        if (!singer) {
             throw new Error("Cantor não encontrado para atualização.");
         }
 
-        const updatePhoto = (photo !== undefined) ? photo : currentSinger.rows[0].photo;
-        const updateName = (name !== undefined) ? name : createSinger.rows[0].name;
-        const updateMusicalGenre = (musical_genre !== undefined) ? musical_genre : currentSinger.rows[0].musical_genre;
-        const updateAbout = (about !== undefined) ? about : currentSinger.rows[0].about;
-        const updatePopularSong = (popular_song !== undefined) ? popular_song : currentSinger.rows[0].popular_song;
-
+        const updatedPhoto = (photo !== undefined) ? photo : singer.photo;
+        const updatedName = (name !== undefined) ? name : singer.name;
+        const updatedMusicalGenre = (musical_genre !== undefined) ? musical_genre : singer.musical_genre;
+        const updatedAbout = (about !== undefined) ? about : singer.about;
+        const updatedPopularSong = (popular_song !== undefined) ? popular_song : singer.popular_song;
         const result = await pool.query(
             "UPDATE singers SET photo = $1, name = $2, musical_genre = $3, about = $4, popular_song = $5 WHERE id = $6 RETURNING *",
-            [updatePhoto, updateName, updateMusicalGenre, updateAbout, updatePopularSong, id]
+            [updatedPhoto, updatedName, updatedMusicalGenre, updatedAbout, updatedPopularSong, id]
         );
         return result.rows[0];
     } catch (error) {
@@ -76,12 +77,12 @@ const deleteSinger = async (id) => {
     try {
         const deleteSinger = await pool.query("DELETE FROM singers WHERE id = $1 RETURNING *", [id]);
         if (!deleteSinger.rows[0]) {
-            return res.status(404).json({ message: "Cantor não encontrado para deletar." });
+            throw new Error("Cantor não encontrado para deletar.");
         }
+        return deleteSinger.rows[0];
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: `Erro ao deletar cantor: ${error.message}` });
+        throw new Error(`Erro ao deletar cantor: ${error.message}`);
     }
 };
 
-module.exports = {getSingers, getSingerById, createSinger, updateSinger, deleteSinger};
+module.exports = { getSingers, getSingerById, createSinger, updateSinger, deleteSinger };

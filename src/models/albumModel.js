@@ -50,21 +50,23 @@ const createAlbum = async (title, singer_id, release_year, duration, num_of_trac
 const updateAlbum = async (id, title, singer_id, release_year, duration, num_of_tracks, photo_cover, photo_disk) => {
     try {
         const currentAlbum = await pool.query("SELECT * FROM albums WHERE id = $1", [id]);
-        if (!currentAlbum.rows[0]) {
+        const album = currentAlbum.rows[0];
+
+        if (!album) {
             throw new Error("Álbum não encontrado para atualização.");
         }
 
-        const updateTitle = (title !== undefined) ? title : currentAlbum.rows[0].title;
-        const updateSingerId = (singer_id !== undefined) ? singer_id : currentAlbum.rows[0].singer_id;
-        const updateReleaseYear = (release_year !== undefined) ? release_year : currentAlbum.rows[0].release_year;
-        const updateDuration = (duration !== undefined) ? duration : currentAlbum.rows[0].duration;
-        const updateNumOfTracks = (num_of_tracks !== undefined) ? num_of_tracks : currentAlbum.rows[0].num_of_tracks;
-        const updatePhotoCover = (photo_cover !== undefined) ? photo_cover : currentAlbum.rows[0].photo_cover;
-        const updatePhotoDisk = (photo_disk !== undefined) ? photo_disk : currentAlbum.rows[0].photo_disk;
+        const updatedTitle = (title !== undefined) ? title : album.title;
+        const updatedSingerId = (singer_id !== undefined) ? singer_id : album.singer_id;
+        const updatedReleaseYear = (release_year !== undefined) ? release_year : album.release_year;
+        const updatedDuration = (duration !== undefined) ? duration : album.duration;
+        const updatedNumOfTracks = (num_of_tracks !== undefined) ? num_of_tracks : album.num_of_tracks;
+        const updatedPhotoCover = (photo_cover !== undefined) ? photo_cover : album.photo_cover;
+        const updatedPhotoDisk = (photo_disk !== undefined) ? photo_disk : album.photo_disk;
 
         const result = await pool.query(
             "UPDATE albums SET title = $1, singer_id = $2, release_year = $3, duration = $4, num_of_tracks = $5, photo_cover = $6, photo_disk = $7 WHERE id = $8 RETURNING *",
-            [updateTitle, updateSingerId, updateReleaseYear, updateDuration, updateNumOfTracks, updatePhotoCover, updatePhotoDisk, id]
+            [updatedTitle, updatedSingerId, updatedReleaseYear, updatedDuration, updatedNumOfTracks, updatedPhotoCover, updatedPhotoDisk, id]
         );
         return result.rows[0];
     } catch (error) {
@@ -74,15 +76,14 @@ const updateAlbum = async (id, title, singer_id, release_year, duration, num_of_
 
 const deleteAlbum = async (id) => {
     try {
-        const deleteAlbum = await pool.query("DELETE FROM albums WHERE id = $1 RETURNING *", [id]);
-        if (!deleteAlbum.rows[0]) {
-            return res.status(404).json({ message: "Álbum não encontrado para deletar." });
+        const deletedAlbum = await pool.query("DELETE FROM albums WHERE id = $1 RETURNING *", [id]);
+        if (!deletedAlbum.rows[0]) {
+            throw new Error("Álbum não encontrado para deletar.");
         }
-        return res.status(200).json({ message: "Álbum deletado com sucesso." });
+        return deletedAlbum.rows[0];
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: `Erro ao deletar álbum: ${error.message}` });
-    }
+        throw new Error(`Erro ao deletar álbum: ${error.message}`);
+    }       
 };
 
 module.exports = { getAlbums, getAlbumById, createAlbum, updateAlbum, deleteAlbum };
