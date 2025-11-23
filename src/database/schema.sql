@@ -16,7 +16,7 @@ CREATE TABLE albums (
     title VARCHAR(100) NOT NULL,
     singer_id INTEGER REFERENCES singers(id) ON DELETE CASCADE,
     release_year INTEGER,
-    duration INT,
+    duration VARCHAR(10),
     num_of_tracks INT,
     photo_cover TEXT,
     photo_disk TEXT
@@ -28,7 +28,7 @@ CREATE TABLE songs (
     description TEXT,
     singer_id INTEGER REFERENCES singers(id) ON DELETE CASCADE,
     album_id INTEGER REFERENCES albums(id) ON DELETE CASCADE,
-    duration INT,
+    duration VARCHAR(5),
     lyrics TEXT
 );
 
