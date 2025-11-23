@@ -2,6 +2,8 @@ require("dotenv").config();
 const express = require("express");  
 const cors = require("cors");
 const singerRoutes = require("./src/routes/singerRoutes");
+const songsRoutes = require("./src/routes/songRoutes");
+const usersRoutes = require("./src/routes/userRoutes");
 const favoritesRoutes = require("./src/routes/favoritesRoutes");
 const albumRoutes = require("./src/routes/albumRoutes");
 const playlistsRoutes = require("./src/routes/playlistsRoutes");
@@ -13,6 +15,8 @@ app.use(express.json());
 
 app.use("/api", playlistsRoutes);
 app.use("/api", singerRoutes);
+app.use("/api", songsRoutes);
+app.use("/api", usersRoutes);
 app.use("/api", albumRoutes);
 app.use("/api", favoritesRoutes);
 app.use("/api", playlist_songsRoutes);

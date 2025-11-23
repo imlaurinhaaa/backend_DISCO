@@ -46,3 +46,42 @@ const createSong = async (title, description, singer_id, album_id, duration, lyr
         throw new Error(`Erro ao criar música: ${error.message}`);
     }
 };
+
+const updateSong = async (id, title, description, singer_id, album_id, duration) => {
+    try {
+        const currentSong = await pool.query("SELECT * FROM songs WHERE id = $1", [id]);
+        const song = currentSong.rows[0];
+
+        if (!song) {
+            throw new Error("Música não encontrada para atualização.");
+        }
+
+        const updatedTitle = (title !== undefined) ? title : song.title;
+        const updatedDescription = (description !== undefined) ? description : song.description;
+        const updatedSingerId = (singer_id !== undefined) ? singer_id : song.singer_id;
+        const updatedAlbumId = (album_id !== undefined) ? album_id : song.album_id;
+        const updatedDuration = (duration !== undefined) ? duration : song.duration;
+
+        const result = await pool.query(
+            "UPDATE songs SET title = $1, description = $2, singer_id = $3, album_id = $4, duration = $5 WHERE id = $6 RETURNING *", 
+            [updatedTitle, updatedDescription, updatedSingerId, updatedAlbumId, updatedDuration, id]
+        );
+        return result.rows[0];
+    } catch (error) {
+        throw new Error(`Erro ao atualizar música: ${error.message}`);
+    }
+};
+
+const deleteSong = async (id) => {
+    try {
+        const deletedSong = await pool.query("DELETE FROM songs WHERE id = $1 RETURNING *", [id]);
+        if (!deletedSong.rows[0]) {
+            throw new Error("Música não encontrada para exclusão.");
+        }
+        return deletedSong.rows[0];
+    } catch (error) {
+        throw new Error(`Erro ao deletar música: ${error.message}`);
+    }
+}
+
+module.exports = { getSongs, getSongById, createSong, updateSong, deleteSong}

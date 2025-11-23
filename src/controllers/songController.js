@@ -24,18 +24,28 @@ const getSongById = async (req, res) => {
 const createSong = async (req, res) => {
     try {
         const { title, description, singer_id, album_id, duration, lyrics } = req.body;
+
+        if (!title || !description || !singer_id || !album_id || !duration || !lyrics) {
+            return res.status(400).json({ message: "Todos os campos são obrigatórios." });
+        }
+
         const newSong = await songModel.createSong(title, description, singer_id, album_id, duration, lyrics);
         res.status(201).json({ message: "Música criada com sucesso", song: newSong });
     } catch (error) {
         console.error(error);
+
+        if (error.message.includes("Já existe uma música com esse título.")) {
+            return res.status(400).json({ message: error.message });
+        }
+
         res.status(500).json({ message: `Erro ao criar música: ${error.message}` });
     }
 };
 
 const updateSong = async (req, res) => {
     try {
-        const { title, description, singer_id, album_id, duration, lyrics } =req.body;
-        const updatedSong = await songModel.updateSong(req.params.id, title, description, singer_id, album_id, duration, lyrics);
+        const { title, description, singer_id, album_id, duration } =req.body;
+        const updatedSong = await songModel.updateSong(req.params.id, title, description, singer_id, album_id, duration);
         res.status(200).json({ message: "Música atualizada com sucesso", song: updatedSong });
     } catch (error) {
         console.error(error);
