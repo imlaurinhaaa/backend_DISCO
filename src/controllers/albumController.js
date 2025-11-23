@@ -29,7 +29,10 @@ const getAlbumById = async (req, res) => {
 
 const  createAlbum = async (req, res) => {
     try {
-        const { title, singer_id, release_year, duration, num_of_tracks, photo_cover, photo_disk } = req.body;
+        const { title, singer_id, release_year, duration, num_of_tracks} = req.body;
+
+        const photo_cover = req.files?.photo_cover?.[0]?.filename;
+        const photo_disk = req.files?.photo_disk?.[0]?.filename;
 
         if (!title || !singer_id || !release_year || !duration || !num_of_tracks || !photo_cover || !photo_disk) {
             return res.status(400).json({ message: "Todos os campos são obrigatórios." });
