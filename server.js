@@ -12,6 +12,7 @@ const playlist_songsRoutes = require("./src/routes/playlist_songsRoutes");
 const app = express();  
 app.use(cors()); 
 app.use(express.json());
+app.use('/uploads', express.static('uploads'));
 
 app.use("/api", playlistsRoutes);
 app.use("/api", singerRoutes);

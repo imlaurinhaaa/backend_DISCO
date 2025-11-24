@@ -1,8 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const singerController = require("../controllers/singerController");
-const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
+const upload = require("./../config/upload.js");
 
 router.get("/singers", singerController.getSingers);
 router.get("/singers/:id", singerController.getSingerById);

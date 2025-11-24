@@ -1,19 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const albumController = require("../controllers/albumController");
-const multer = require("multer");
-const path = require("path");
-
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, "..", "/uploads"));
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + "-" + file.originalname);
-    }
-});
-
-const upload = multer({ storage });
+const upload = require("./../config/upload.js");
 
 router.get("/albums", albumController.getAlbums);
 router.get("/albums/:id", albumController.getAlbumById);
