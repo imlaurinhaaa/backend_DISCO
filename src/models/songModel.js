@@ -1,24 +1,56 @@
 const pool = require('../config/database');
 
-const getSongs = async (title) => {
-    let query = "SELECT songs.* FROM songs";
+const getSongs = async (title, musical_genre) => {
+    let query = `
+        SELECT 
+            s.*, 
+            sg.name AS singer_name, 
+            sg.musical_genre 
+        FROM songs s
+        JOIN singers sg ON s.singer_id = sg.id
+    `;
     let conditions = [];
     let params = [];
 
+    if (musical_genre && musical_genre.trim()) {
+        params.push(musical_genre.trim()); 
+        conditions.push(`sg.musical_genre = $${params.length}`);
+    }
+    
     if (title && title.trim()) {
         params.push(`%${title.trim()}%`);
-        conditions.push(`songs.title ILIKE $${params.length}`);
+        conditions.push(`s.title ILIKE $${params.length}`);
     }
+
 
     if (conditions.length > 0) {
         query += " WHERE " + conditions.join(" AND ");
     }
+    
+    query += " ORDER BY s.title"; 
+    
+    console.log("SongModel Query:", query, "Params:", params); // Debug
 
     try {
         const result = await pool.query(query, params);
         return result.rows;
     } catch (error) {
         throw new Error(`Erro ao buscar músicas: ${error.message}`);
+    }
+};
+
+const getSongsBySingerName = async (singer_name) => {
+    try {
+        const result = await pool.query(
+            `SELECT s.*
+             FROM songs s
+             JOIN singers sg ON s.singer_id = sg.id
+             WHERE sg.name ILIKE $1`,
+            [`%${singer_name}%`] 
+        );
+        return result.rows;
+    } catch (error) {
+        throw new Error("Erro ao buscar músicas do cantor: " + error.message);
     }
 };
 
@@ -84,4 +116,4 @@ const deleteSong = async (id) => {
     }
 }
 
-module.exports = { getSongs, getSongById, createSong, updateSong, deleteSong}
+module.exports = { getSongs, getSongsBySingerName, getSongById, createSong, updateSong, deleteSong}
