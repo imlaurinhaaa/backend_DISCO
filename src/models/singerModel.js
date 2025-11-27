@@ -1,13 +1,18 @@
 const pool = require('../config/database');
 
-const getSingers = async (name) => {
-    let query = "SELECT singers.* FROM singers";
+const getSingers = async (name, musical_genre) => {
+    let query = "SELECT * FROM singers";
     let conditions = [];
     let params = [];
 
     if (name && name.trim()) {
         params.push(`%${name.trim()}%`);
-        conditions.push(`singers.name ILIKE $${params.length}`);
+        conditions.push(`name ILIKE $${params.length}`);
+    }
+
+    if (musical_genre && musical_genre.trim()) {
+        params.push(`%${musical_genre.trim()}%`);
+        conditions.push(`musical_genre ILIKE $${params.length}`);
     }
 
     if (conditions.length > 0) {
