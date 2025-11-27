@@ -27,6 +27,20 @@ const getSingers = async (name, musical_genre) => {
     }
 };
 
+const getGenres = async () => {
+    try {
+        const result = await pool.query(`
+            SELECT DISTINCT musical_genre
+            FROM singers
+            WHERE musical_genre IS NOT NULL
+            ORDER BY musical_genre;
+        `);
+        return result.rows;
+    } catch (error) {
+        throw new Error("Erro ao buscar gêneros: " + error.message);
+    }
+};
+
 const getSingerById = async (id) => {
     try {
         const result = await pool.query("SELECT * FROM singers WHERE id = $1", [id]);
@@ -90,4 +104,4 @@ const deleteSinger = async (id) => {
     }
 };
 
-module.exports = { getSingers, getSingerById, createSinger, updateSinger, deleteSinger };
+module.exports = { getSingers, getGenres, getSingerById, createSinger, updateSinger, deleteSinger };

@@ -14,6 +14,15 @@ const getSingers = async (req, res) => {
     }
 };
 
+const getGenresController = async (req, res) => {
+    try {
+        const genres = await singerModel.getGenres();
+        res.json(genres);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 const getSingerById = async (req, res) => {
     try {
         const singer = await singerModel.getSingerById(req.params.id);
@@ -86,4 +95,4 @@ const deleteSinger = async (req, res) => {
     }
 };
 
-module.exports = { getSingers, getSingerById, createSinger, updateSinger, deleteSinger };
+module.exports = { getSingers, getGenresController, getSingerById, createSinger, updateSinger, deleteSinger };
