@@ -4,10 +4,8 @@ const getSingers = async (req, res) => {
     try {
         const name = req.query.name || req.query.nome;
         const musical_genre = req.query.musical_genre || req.query.musicalGenre || req.query.genre || req.query.genero;
-
-        console.log("getSingers - req.query:", req.query); // debug rápido
         const singers = await singerModel.getSingers(name, musical_genre);
-        res.status(200).json({ message: "Cantores encontrados com sucesso", singers });
+        res.status(200).json(singers); 
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: `Erro ao buscar cantores: ${error.message}` });

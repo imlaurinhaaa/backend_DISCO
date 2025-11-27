@@ -2,12 +2,27 @@ const songModel = require("../models/songModel");
 
 const getSongs = async (req, res) => {
     try {
-        const { title } = req.query;
-        const songs = await songModel.getSongs(title);
-        res.status(200).json({ message: "Músicas encontradas com sucesso", songs });
+        const { title, musical_genre } = req.query; 
+        const songs = await songModel.getSongs(title, musical_genre); 
+        
+        res.status(200).json(songs); 
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: `Erro ao buscar músicas: ${error.message}` });
+    }
+};
+
+const getSongsBySingerNameController = async (req, res) => {
+    try {
+        const { name } = req.query; 
+        if (!name) {
+            return res.status(400).json({ error: "Nome do cantor é obrigatório" });
+        }
+
+        const songs = await songModel.getSongsBySingerName(name);
+        res.json(songs);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 };
 
@@ -63,4 +78,4 @@ const deleteSong = async (req, res) => {
     }
 };
 
-module.exports = { getSongs, getSongById, createSong, updateSong, deleteSong };
+module.exports = { getSongs, getSongsBySingerNameController, getSongById, createSong, updateSong, deleteSong };
