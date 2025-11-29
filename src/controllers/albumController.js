@@ -2,12 +2,14 @@ const albumModel = require("../models/albumModel");
 
 const getAlbums = async (req, res) => {
     try {
-        const { title } = req.query;
+        const { title } = req.query; 
+        
         const albums = await albumModel.getAlbums(title);
-        res.status(200).json({ message: "Álbuns encontrados com sucesso", albums });
+        
+        res.status(200).json(albums);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: `Erro ao buscar álbuns: ${error.message}` });
+        console.error("Erro no AlbumController.getAlbums:", error.message);
+        res.status(500).json({ message: `Erro interno ao buscar álbuns: ${error.message}` });
     }
 };
 
