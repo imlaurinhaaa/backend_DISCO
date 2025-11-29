@@ -1,24 +1,34 @@
 const pool = require("../config/database");
 
 const getAlbums = async (title) => {
-    let query = "SELECT albums.* FROM albums";
+    let query = `
+        SELECT 
+            a.id, 
+            a.title, 
+            a.release_year,
+            sg.name AS singer_name
+        FROM albums a
+        JOIN singers sg ON a.singer_id = sg.id
+    `;
     let conditions = [];
     let params = [];
 
     if (title && title.trim()) {
-        params.push(`%${title.trim()}%`);
-        conditions.push(`albums.title ILIKE $${params.length}`);
+        params.push(`%${title.trim()}%`); 
+        conditions.push(`a.title ILIKE $${params.length}`);
     }
 
     if (conditions.length > 0) {
         query += " WHERE " + conditions.join(" AND ");
     }
+    
+    query += " ORDER BY a.release_year DESC, a.title ASC"; 
 
     try {
         const result = await pool.query(query, params);
         return result.rows;
     } catch (error) {
-        throw new Error(`Erro ao buscar álbuns: ${error.message}`);
+        throw new Error(`Erro ao buscar álbuns no Model: ${error.message}`);
     }
 };
 
