@@ -17,8 +17,10 @@ const upload = multer({ storage });
 
 router.get("/users", userController.getUsers);
 router.get("/users/:id", userController.getUserById);
-router.post("/users", upload.single("photo"), userController.createUser);
+router.post("/users/create", userController.createUser);
 router.put("/users/:id", upload.single("photo"), userController.updateUser);
 router.delete("/users/:id", userController.deleteUser);
+router.post("/register", upload.single("photo"), userController.registerUser);
+router.post("/user/login", userController.loginUser);
 
 module.exports = router;

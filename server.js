@@ -22,8 +22,6 @@ app.use("/api", albumRoutes);
 app.use("/api", favoritesRoutes);
 app.use("/api", playlist_songsRoutes);
 
-const PORT = process.env.PORT || 4000;  
-
-app.listen(PORT, () => {  
-    console.log(`DISCO! 💽 http://localhost:${PORT}`);  
+app.listen(4000, '0.0.0.0', () => {
+  console.log("DISCO! 💽  http://localhost:${PORT}");
 });
