@@ -7,7 +7,8 @@ const getAlbums = async (title) => {
             a.title, 
             a.release_year,
             sg.name AS singer_name,
-            a.photo_cover AS foto_capa
+            a.photo_cover,
+            a.photo_disk
         FROM albums a
         JOIN singers sg ON a.singer_id = sg.id
     `;
