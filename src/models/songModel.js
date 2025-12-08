@@ -5,9 +5,12 @@ const getSongs = async (title, musical_genre) => {
         SELECT 
             s.*, 
             sg.name AS singer_name, 
-            sg.musical_genre 
+            sg.musical_genre,
+            a.photo_cover AS album_cover,
+            a.photo_disk AS album_disk
         FROM songs s
         JOIN singers sg ON s.singer_id = sg.id
+        JOIN albums a ON s.album_id = a.id
     `;
     let conditions = [];
     let params = [];

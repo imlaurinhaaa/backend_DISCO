@@ -23,5 +23,5 @@ app.use("/api", favoritesRoutes);
 app.use("/api", playlist_songsRoutes);
 
 app.listen(4000, '0.0.0.0', () => {
-  console.log("DISCO! 💽  http://localhost:${PORT}");
+  console.log("DISCO! 💽  http://localhost:4000");
 });
