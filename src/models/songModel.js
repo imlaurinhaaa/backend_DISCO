@@ -16,10 +16,10 @@ const getSongs = async (title, musical_genre) => {
     let params = [];
 
     if (musical_genre && musical_genre.trim()) {
-        params.push(musical_genre.trim()); 
+        params.push(musical_genre.trim());
         conditions.push(`sg.musical_genre = $${params.length}`);
     }
-    
+
     if (title && title.trim()) {
         // 🌟 CORREÇÃO AQUI
         params.push(title.trim()); 
@@ -31,10 +31,10 @@ const getSongs = async (title, musical_genre) => {
     if (conditions.length > 0) {
         query += " WHERE " + conditions.join(" AND ");
     }
-    
-    query += " ORDER BY s.title"; 
-    
-    console.log("SongModel Query:", query, "Params:", params); // Debug
+
+    query += " ORDER BY s.title";
+
+    console.log("SongModel Query:", query, "Params:", params);
 
     try {
         const result = await pool.query(query, params);
@@ -47,14 +47,20 @@ const getSongs = async (title, musical_genre) => {
 const getSongsBySingerName = async (singer_name) => {
     try {
         const result = await pool.query(
-            `SELECT s.*
+            `SELECT 
+                s.*,
+                sg.name AS singer_name, 
+                a.photo_cover AS album_cover,  
+                a.title AS album_title        
              FROM songs s
              JOIN singers sg ON s.singer_id = sg.id
+             LEFT JOIN albums a ON s.album_id = a.id
              WHERE sg.name ILIKE $1`,
             [`%${singer_name}%`] 
         );
         return result.rows;
     } catch (error) {
+        console.error("SQL Error in getSongsBySingerName:", error.message); 
         throw new Error("Erro ao buscar músicas do cantor: " + error.message);
     }
 };
@@ -100,7 +106,7 @@ const updateSong = async (id, title, description, singer_id, album_id, duration)
         const updatedDuration = (duration !== undefined) ? duration : song.duration;
 
         const result = await pool.query(
-            "UPDATE songs SET title = $1, description = $2, singer_id = $3, album_id = $4, duration = $5 WHERE id = $6 RETURNING *", 
+            "UPDATE songs SET title = $1, description = $2, singer_id = $3, album_id = $4, duration = $5 WHERE id = $6 RETURNING *",
             [updatedTitle, updatedDescription, updatedSingerId, updatedAlbumId, updatedDuration, id]
         );
         return result.rows[0];
@@ -121,4 +127,4 @@ const deleteSong = async (id) => {
     }
 }
 
-module.exports = { getSongs, getSongsBySingerName, getSongById, createSong, updateSong, deleteSong}
+module.exports = { getSongs, getSongsBySingerName, getSongById, createSong, updateSong, deleteSong }
