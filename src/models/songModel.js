@@ -21,8 +21,10 @@ const getSongs = async (title, musical_genre) => {
     }
 
     if (title && title.trim()) {
-        params.push(`%${title.trim()}%`);
-        conditions.push(`s.title ILIKE $${params.length}`);
+        // 🌟 CORREÇÃO AQUI
+        params.push(title.trim()); 
+        // Usa o operador de concatenação (||) do PostgreSQL para adicionar os curingas (%)
+        conditions.push(`s.title ILIKE '%' || $${params.length} || '%'`); 
     }
 
 
